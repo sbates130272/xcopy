@@ -1,0 +1,45 @@
+xcopy userspace test repo
+-------------------------
+
+Introduction
+------------
+
+This repo contains a bunch of stuff for testing the p2pdma based xcopy
+work [1].
+
+Setup
+-----
+
+As well as this repo you will need two things:
+
+1. A xcopy enabled Linux kernel. The source for this can be found here
+[2] while a config that works for this kernel and qemu can be found
+here [3].
+2. Three QEMU image files. The first should be an OS image file and
+you can use the scripts folder in [4] to generate that. The other two
+are for the NVMe image files and can be constructed using qemu-img.
+
+Once you have these things you can run the xcopy test executiable on
+QEMU via the following steps.
+
+1. Build the bzImage for the Linux kernel using [2] and the config
+file in the configs folder of this repo.
+
+2. Boot up the QEMU VM using the kernel from step 1 and the images
+mentioned above.
+
+2. Build the xcopy executable in this repo on either the host or
+inside the QEMU guest.
+
+3. Ensure filesystems are setup on the two fake NVMe SSDs exposed via
+QEMU.
+
+4. Use dd and /dev/urandom to place a file on the filesystem on
+/dev/nvme0n1.
+
+5. Do something like: ./xcopy <file from step 4> <output file on other
+NVMe SSD>.
+
+Assuming all the above steps go as planned you should see some
+information in dmesg regarding the read and write and the output file
+should not be a copy of the input file.

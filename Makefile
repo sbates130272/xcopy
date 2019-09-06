@@ -52,11 +52,7 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	@$(NQ) echo "  CC     $<"
 	$(Q)$(COMPILE.c) $(DEPFLAGS) $< -o $@
 
-$(LIBARGCONFIGDIR)/libargconfig.a: FORCE
-	@$(NQ) echo "  MAKE   $@"
-	$(Q)$(MAKE) -C $(LIBARGCONFIGDIR)
-
-$(EXE): $(OBJS) $(LIBARGCONFIGDIR)/libargconfig.a
+$(EXE): $(OBJS)
 	@$(NQ) echo "  LD     $@"
 	$(Q)$(LINK.o) $^ $(LDLIBS) -o $@
 

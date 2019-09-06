@@ -1,0 +1,21 @@
+#!/bin/bash
+# A mix of runqemu and the PCIe switch from Logan.
+
+KERNEL=${KERNEL:-bzImage}
+IMGDIR=${IMGDIR:-}
+IMAGE=${IMAGE:-${IMGDIR}/jessie.qcow2}
+
+qemu-system-x86_64 -s -m 2048 $IMAGE \
+    -device pcie-root-port,id=root_port1,chassis=1,slot=1 \
+    -device x3130-upstream,id=upstream_port1,bus=root_port1 \
+    -device xio3130-downstream,id=downstream_port1,bus=upstream_port1,chassis=2,slot=1 \
+    -device xio3130-downstream,id=downstream_port2,bus=upstream_port1,chassis=2,slot=2 \
+    -drive file=${IMGDIR}/nvme.qcow2,if=none,id=nvme1,snapshot=on \
+    -device nvme,drive=nvme1,serial=nvme1,cmb_size_mb=64,bus=downstream_port1 \
+    -drive file=${IMGDIR}/nvme2.qcow2,if=none,id=nvme2,snapshot=on \
+    -device nvme,drive=nvme2,serial=nvme2,bus=downstream_port2 \
+    -virtfs local,id=home,path=/home/,security_model=mapped,mount_tag=home \
+    -nographic \
+    -serial mon:stdio \
+    -kernel $KERNEL \
+    -append "root=/dev/sda2 rootfstype=ext4 console=ttyS0,38400n8"
