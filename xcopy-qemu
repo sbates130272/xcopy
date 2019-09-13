@@ -18,4 +18,4 @@ qemu-system-x86_64 -s -m 2048 $IMAGE \
     -nographic \
     -serial mon:stdio \
     -kernel $KERNEL \
-    -append "root=/dev/sda2 rootfstype=ext4 console=ttyS0,38400n8"
+    -append "root=/dev/sda2 rootfstype=ext4 console=ttyS0,38400n8 nokaslr"
